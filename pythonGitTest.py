@@ -18,7 +18,20 @@ class GitApi_Tests(unittest.TestCase):
     def test_repo(self):
         varInputUserID="Dtharuni"
         rp = requests.get('https://api.github.com/users/Dtharuni')
-    
+
+    def test_invalid_user(self):
+        varInputUserID = "NonExistentUser123"
+        rp = requests.get('https://api.github.com/users/' + varInputUserID)
+        self.assertEqual(rp.status_code, 404)
+        print("Test 2 Response Code (Invalid User): ", rp.status_code)
+
+    def test_rate_limit(self):
+        rp = requests.get('https://api.github.com/rate_limit')
+        self.assertEqual(rp.status_code, 200)
+        limit_data = rp.json()["resources"]["core"]
+        remaining_limit = limit_data["remaining"]
+        self.assertTrue(remaining_limit > 0, "API rate limit is not exhausted")
+
   
 if __name__ == '__main__':
     #varInputUserID = "Dtharuni"
